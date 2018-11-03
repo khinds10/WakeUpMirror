@@ -53,17 +53,15 @@ while count < 10:
     except (Exception):
         time.sleep(10)
 
-sunriseTime = 1540411201
-
-##-----------------------------------------------------------------------------------------------------------------------------
-## sleep till sunrise, then start capturing pictures, if no times found then just sleep for 2 hours (so roughly around 6am)
-##-----------------------------------------------------------------------------------------------------------------------------
-#timeTillSunrise = sunriseTime - timeNow
-#if (timeTillSunrise > 0):
-#    print "Sleeping till Sunrise (zzz): " + str(timeTillSunrise) + " seconds"
-#    time.sleep(timeTillSunrise)
-#else:
-#    time.sleep(1)
+#-----------------------------------------------------------------------------------------------------------------------------
+# sleep till sunrise, then start capturing pictures, if no times found then just sleep for 2 hours (so roughly around 6am)
+#-----------------------------------------------------------------------------------------------------------------------------
+timeTillSunrise = sunriseTime - timeNow
+if (timeTillSunrise > 0):
+    print "Sleeping till Sunrise (zzz): " + str(timeTillSunrise) + " seconds"
+    time.sleep(timeTillSunrise)
+else:
+    time.sleep(1)
 
 #-----------------------------------------------------------------------------------------------------------------------------
 # take set number of pictures in the desired time frame after sunset (set in settings)
@@ -74,26 +72,26 @@ cameraPictureTaken = settings.projectFolder + 'image.jpg'
 secondsBetweenPictures = 1 #int((settings.timeToCaptureMinutes * 60) / settings.numberOfSunriseCaptures)
 sunriseOccuredTime = datetime.fromtimestamp(sunriseTime)
 sunriseOccuredTime = sunriseOccuredTime.strftime('%l:%M%p on %b %d %Y')
-#while count <= settings.numberOfSunriseCaptures:
-    #try:
+while count <= settings.numberOfSunriseCaptures:
+    try:
 
-# capture image from camera
-camera.capture(cameraPictureTaken)
+        # capture image from camera
+        camera.capture(cameraPictureTaken)
 
-# save the current capture
-pictureTakenFileName = time.strftime('%l:%M%p on %b %d %Y').replace(" ", "-")
-pictureTakenFileName = 'Sunrise-' + pictureTakenFileName + '.jpg';
-pictureTaken = time.strftime('%l:%M%p on %b %d ')
-subprocess.call(['cp', cameraPictureTaken, settings.projectFolder + '/sunrise-pictures/' + pictureTakenFileName ])
-colorsInPictures[pictureTakenFileName] = {}
-pictureColorTotals[pictureTakenFileName] = 0
+        # save the current capture
+        pictureTakenFileName = time.strftime('%l:%M%p on %b %d %Y').replace(" ", "-")
+        pictureTakenFileName = 'Sunrise-' + pictureTakenFileName + '.jpg';
+        pictureTaken = time.strftime('%l:%M%p on %b %d ')
+        subprocess.call(['cp', cameraPictureTaken, settings.projectFolder + '/sunrise-pictures/' + pictureTakenFileName ])
+        colorsInPictures[pictureTakenFileName] = {}
+        pictureColorTotals[pictureTakenFileName] = 0
 
-pictureColorTotals[pictureTakenFileName] = len(colorsInPictures[pictureTakenFileName])
-time.sleep(secondsBetweenPictures)
-count = count + 1
+        pictureColorTotals[pictureTakenFileName] = len(colorsInPictures[pictureTakenFileName])
+        time.sleep(secondsBetweenPictures)
+        count = count + 1
         
-    #except (Exception):
-    #   time.sleep(secondsBetweenPictures)
+    except (Exception):
+       time.sleep(secondsBetweenPictures)
 
 # get the most colorful image and display it on the digole display / email it to user for morning email
 mostColorfulImage = ''
@@ -101,7 +99,6 @@ for key, value in sorted(pictureColorTotals.iteritems(), key=lambda (k,v): (v,k)
     mostColorfulImage = key
 mostColorfulImage = settings.projectFolder + '/sunrise-pictures/' + mostColorfulImage
 print 'Most Colorful Sunrise Image is: ' + mostColorfulImage
-
 
 # draw the current conditions and time on the sunrise full image
 img = Image.open(mostColorfulImage)
@@ -116,3 +113,6 @@ img.save(mostColorfulImage)
 
 # email the most colorful image as a morning email
 subprocess.Popen( "/usr/bin/uuencode " + mostColorfulImage + " sunrise.jpg | /usr/bin/mail -s 'Sunrise: " + time.strftime('%b %d, %Y') +"' " + settings.emailAddress, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+# upload the image to the webhost to show on sunrise mirror
+subprocess.Popen( "sshpass -p '" + settings.sftpPass + "' scp -o 'StrictHostKeyChecking no' " + mostColorfulImage + " " + settings.sftpUser + "@" + settings.sftpHost + ":" + settings.sftpFolder, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
