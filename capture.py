@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Kevin Hinds http://www.kevinhinds.com
 # License: GPL 2.0
-import time, json, string, cgi, subprocess, json, PIL, cv2, subprocess, colorutils, pprint, os
+import shutil, time, json, string, cgi, subprocess, json, PIL, cv2, subprocess, colorutils, pprint, os
 import picamera
 from datetime import datetime
 import numpy as np
@@ -39,7 +39,7 @@ todaySummary = ''
 while count < 10:
     try:
         count = count + 1
-        weatherInfo = json.loads(subprocess.check_output(['curl', settings.weatherAPIURL]))
+        weatherInfo = json.loads(subprocess.check_output(['curl', settings.weatherAPIURL]))        
         sunriseTime = weatherInfo['daily']['data'][0]['sunriseTime']
         currentFeelsLikeTemp = weatherInfo['currently']['apparentTemperature']
         currentHumidity = weatherInfo['currently']['humidity']
@@ -52,6 +52,9 @@ while count < 10:
         break
     except (Exception):
         time.sleep(10)
+
+# for testing
+sunriseTime = int(time.time())
 
 #-----------------------------------------------------------------------------------------------------------------------------
 # sleep till sunrise, then start capturing pictures, if no times found then just sleep for 2 hours (so roughly around 6am)
@@ -69,7 +72,7 @@ else:
 colorsInPictures = {}
 pictureColorTotals = {}
 cameraPictureTaken = settings.projectFolder + 'image.jpg'
-secondsBetweenPictures = 1 #int((settings.timeToCaptureMinutes * 60) / settings.numberOfSunriseCaptures)
+secondsBetweenPictures = int((settings.timeToCaptureMinutes * 60) / settings.numberOfSunriseCaptures)
 sunriseOccuredTime = datetime.fromtimestamp(sunriseTime)
 sunriseOccuredTime = sunriseOccuredTime.strftime('%l:%M%p on %b %d %Y')
 while count <= settings.numberOfSunriseCaptures:
@@ -111,8 +114,12 @@ draw.text( (10, 425), imageCurrentlyText2 , (255,255,200), font=font )
 draw.text( (10, 450), imageForecastText , (200,200,200), font=fontSmall )
 img.save(mostColorfulImage)
 
+# get the current most colorful to move over to the webserver and email it
+shutil.move(mostColorfulImage, 'mostColorful.jpg')
+
 # email the most colorful image as a morning email
-subprocess.Popen( "/usr/bin/uuencode " + mostColorfulImage + " sunrise.jpg | /usr/bin/mail -s 'Sunrise: " + time.strftime('%b %d, %Y') +"' " + settings.emailAddress, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+subprocess.Popen( "/usr/bin/uuencode mostColorful.jpg sunrise.jpg | /usr/bin/mail -s 'Sunrise: " + time.strftime('%b %d, %Y') +"' " + settings.emailAddress, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 # upload the image to the webhost to show on sunrise mirror
-subprocess.Popen( "sshpass -p '" + settings.sftpPass + "' scp -o 'StrictHostKeyChecking no' " + mostColorfulImage + " " + settings.sftpUser + "@" + settings.sftpHost + ":" + settings.sftpFolder, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+subprocess.Popen( "sshpass -p '" + settings.sftpPass + "' scp -o 'StrictHostKeyChecking no' mostColorful.jpg " + settings.sftpUser + "@" + settings.sftpHost + ":" + settings.sftpFolder, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
