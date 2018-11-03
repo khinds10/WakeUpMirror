@@ -2,7 +2,6 @@
 
 #### Daily Sunrise and summary for your day as you wake in the morning
 
- 
 
 #### Flashing RaspberriPi Hard Disk / Install Required Software (Using Ubuntu Linux)
 
@@ -158,8 +157,6 @@ Add the following lines to have your raspberrypi automatically connect to your h
 
 **RaspberriPi Zero (W Model w/ built in wireless)**
 ![PiZero W](https://raw.githubusercontent.com/khinds10/SunRiseCatcher/master/construction/pizero.jpg "PiZero W")
-
-
 
 PI Camera w/picture here
 
