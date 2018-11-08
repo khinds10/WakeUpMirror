@@ -65,9 +65,15 @@ draw = ImageDraw.Draw(img)
 imageCurrentlyText = 'Conditions @ [' + time.strftime('%l:%M%p on %b %d %Y') + ' ] / ' + str(currentSummary) + ' / Feels Like: ' + str(int(currentFeelsLikeTemp)) + '*F [' + str(int(currentHumidity*100)) + '%]'
 imageCurrentlyText2 = 'Wind Speed: ' + str(int(currentWindSpeed)) + ' mph / Cloud Cover: ' + str(int(currentCloudCover*100)) + '%' 
 imageForecastText = 'Today\'s Forecast: High (' + str(int(todayFeelsLikeTempHigh)) + '*F) / Low (' + str(int(todayFeelsLikeTempLow)) + '*F) / ' + str(todaySummary)
+
+# draw text on image with a drop shadow for legibility
+draw.text( (11, 401), imageCurrentlyText , (0,0,0), font=font )
 draw.text( (10, 400), imageCurrentlyText , (255,255,200), font=font )
+draw.text( (11, 426), imageCurrentlyText2 , (0,0,0), font=font )
 draw.text( (10, 425), imageCurrentlyText2 , (255,255,200), font=font )
+draw.text( (11, 451), imageForecastText , (0,0,0), font=fontSmall )
 draw.text( (10, 450), imageForecastText , (200,200,200), font=fontSmall )
+
 img.save(cameraPictureTaken)
 
 # get the current most colorful to move over to the webserver and email it
