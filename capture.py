@@ -18,8 +18,8 @@ font = ImageFont.truetype("/home/pi/WakeUpMirror/fonts/BitstreamVeraSans.ttf", 1
 fontSmall = ImageFont.truetype("/home/pi/WakeUpMirror/fonts/BitstreamVeraSans.ttf", 14)
 pp = pprint.PrettyPrinter(indent=4)
 camera = picamera.PiCamera()
-camera.vflip = True
-camera.hflip = True
+camera.vflip = False
+camera.hflip = False
         
 # current weather values
 weatherInfo = None
@@ -53,12 +53,12 @@ while count < 10:
     except (Exception):
         time.sleep(10)
 
-# for testing
-sunriseTime = int(time.time())
-
 #-----------------------------------------------------------------------------------------------------------------------------
 # sleep till sunrise, then start capturing pictures, if no times found then just sleep for 2 hours (so roughly around 6am)
 #-----------------------------------------------------------------------------------------------------------------------------
+
+#set back 30 minutes to get the best colors
+sunriseTime = sunriseTime−1800
 timeTillSunrise = sunriseTime - timeNow
 if (timeTillSunrise > 0):
     print "Sleeping till Sunrise (zzz): " + str(timeTillSunrise) + " seconds"
