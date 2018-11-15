@@ -62,9 +62,14 @@ camera.capture(cameraPictureTaken)
 # draw the current conditions and time on the sunrise full image
 img = Image.open(cameraPictureTaken)
 draw = ImageDraw.Draw(img)
-imageCurrentlyText = 'Conditions @ [' + time.strftime('%l:%M%p on %b %d %Y') + ' ] / ' + str(currentSummary) + ' / Feels Like: ' + str(int(currentFeelsLikeTemp)) + '*F [' + str(int(currentHumidity*100)) + '%]'
-imageCurrentlyText2 = 'Wind Speed: ' + str(int(currentWindSpeed)) + ' mph / Cloud Cover: ' + str(int(currentCloudCover*100)) + '%' 
-imageForecastText = 'Today\'s Forecast: High (' + str(int(todayFeelsLikeTempHigh)) + '*F) / Low (' + str(int(todayFeelsLikeTempLow)) + '*F) / ' + str(todaySummary)
+try:
+    imageCurrentlyText = 'Conditions @ [' + time.strftime('%l:%M%p on %b %d %Y') + ' ] / ' + str(currentSummary) + ' / Feels Like: ' + str(int(currentFeelsLikeTemp)) + '*F [' + str(int(currentHumidity*100)) + '%]'
+    imageCurrentlyText2 = 'Wind Speed: ' + str(int(currentWindSpeed)) + ' mph / Cloud Cover: ' + str(int(currentCloudCover*100)) + '%' 
+    imageForecastText = 'Today\'s Forecast: High (' + str(int(todayFeelsLikeTempHigh)) + '*F) / Low (' + str(int(todayFeelsLikeTempLow)) + '*F) / ' + str(todaySummary)
+except:
+    imageCurrentlyText = ''
+    imageCurrentlyText2 = ''
+    imageForecastText = ''
 
 # draw text on image with a drop shadow for legibility
 draw.text( (11, 401), imageCurrentlyText , (0,0,0), font=font )
