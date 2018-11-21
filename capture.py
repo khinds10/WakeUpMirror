@@ -17,10 +17,17 @@ timeNow = int(time.time())
 font = ImageFont.truetype("/home/pi/WakeUpMirror/fonts/BitstreamVeraSans.ttf", 16)
 fontSmall = ImageFont.truetype("/home/pi/WakeUpMirror/fonts/BitstreamVeraSans.ttf", 14)
 pp = pprint.PrettyPrinter(indent=4)
-camera = picamera.PiCamera()
-camera.vflip = False
-camera.hflip = False
-        
+
+# get camera resource, keep trying if the other script is using it
+while True:
+    try:
+        camera = picamera.PiCamera()
+        camera.vflip = False
+        camera.hflip = False
+        break
+    except (Exception):
+        time.sleep(10)
+
 # current weather values
 weatherInfo = None
 sunriseTime = ''
@@ -58,7 +65,7 @@ while count < 10:
 #-----------------------------------------------------------------------------------------------------------------------------
 
 #set back 30 minutes to get the best colors
-sunriseTime = sunriseTime−1800
+sunriseTime = sunriseTime - 1800
 timeTillSunrise = sunriseTime - timeNow
 if (timeTillSunrise > 0):
     print "Sleeping till Sunrise (zzz): " + str(timeTillSunrise) + " seconds"
