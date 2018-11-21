@@ -113,9 +113,15 @@ print 'Most Colorful Sunrise Image is: ' + mostColorfulImage
 # draw the current conditions and time on the sunrise full image
 img = Image.open(mostColorfulImage)
 draw = ImageDraw.Draw(img)
-imageCurrentlyText = 'Sunrise Conditions @ [' + str(sunriseOccuredTime) + ' ] / ' + str(currentSummary) + ' / Felt Like: ' + str(int(currentFeelsLikeTemp)) + '*F [' + str(int(currentHumidity*100)) + '%]'
-imageCurrentlyText2 = 'Wind Speed was: ' + str(int(currentWindSpeed)) + ' mph / Cloud Cover was: ' + str(int(currentCloudCover*100)) + '%' 
-imageForecastText = 'Today\'s Forecast: High (' + str(int(todayFeelsLikeTempHigh)) + '*F) / Low (' + str(int(todayFeelsLikeTempLow)) + '*F) / ' + str(todaySummary)
+try:
+    imageCurrentlyText = 'Sunrise Conditions @ [' + str(sunriseOccuredTime) + ' ] / ' + str(currentSummary) + ' / Felt Like: ' + str(int(currentFeelsLikeTemp)) + '*F [' + str(int(currentHumidity*100)) + '%]'
+    imageCurrentlyText2 = 'Wind Speed was: ' + str(int(currentWindSpeed)) + ' mph / Cloud Cover was: ' + str(int(currentCloudCover*100)) + '%' 
+    imageForecastText = 'Today\'s Forecast: High (' + str(int(todayFeelsLikeTempHigh)) + '*F) / Low (' + str(int(todayFeelsLikeTempLow)) + '*F) / ' + str(todaySummary)
+except:
+    imageCurrentlyText = ''
+    imageCurrentlyText2 = ''
+    imageForecastText = ''
+
 draw.text( (10, 400), imageCurrentlyText , (255,255,200), font=font )
 draw.text( (10, 425), imageCurrentlyText2 , (255,255,200), font=font )
 draw.text( (10, 450), imageForecastText , (200,200,200), font=fontSmall )
